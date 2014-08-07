@@ -18,6 +18,7 @@ add_filter( 'manage_edit-baidu_maps_columns', 'my_columns'); 			//add columns in
 add_action( 'manage_posts_custom_column', 'populate_columns' );			//populate colums
 add_filter( 'manage_edit-baidu_maps_sortable_columns', 'sort_me' );		//make columns sortable
 add_filter( 'request', 'column_orderby' );								//order custom columns
+add_action('wp_head', 'head_settings');
 
 /**
 *create custom post type when init
@@ -65,6 +66,14 @@ function my_admin() {
     );
 }
 
+function theme_name_scripts() {
+	wp_register_style( 'baidu_map_style', plugins_url( '/style/style.css', __FILE__ ) );
+	wp_enqueue_style( 'baidu_map_style');
+	wp_register_script( 'baidu_map_api', plugins_url( '/js/baidu_map_api.js', __FILE__ ) );
+	wp_enqueue_script( 'baidu_map_api');
+}
+
+
 function display_baidu_map_meta_box( $baidu_map ) {
     // Retrieve current name of the Map name and rating based on ID
     $baidu_map_name = esc_html( get_post_meta( $baidu_map->ID, 'baidu_map_name', true ) );
@@ -88,10 +97,26 @@ function display_baidu_map_meta_box( $baidu_map ) {
                 </select>
             </td>
         </tr>
+        <tr>
+        	<td style='width: 100%'> Add Markers </td>
+        </tr>
+        <tr>
+        	<td style='width: 100%'> 
+            <input type="input" name="bdmap_coordinates" size="55" id="bdmap_coordinates" value="">
+            </td>
+        </tr>
     </table>
+    	<?php add_action( 'admin_enqueue_scripts', 'theme_name_scripts' ); ?>
+         <div id="bdmap_container">hahaha</div>
     <?php
 }
 
+function head_settings(){
+	?>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1b5ea53022a22b9b748e1502fe5a1061"></script>
+		
+	<?php
+}
 
 /**
 *callback func for save
